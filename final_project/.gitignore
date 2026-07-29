@@ -1,0 +1,9 @@
+# Virtual env
+venv/
+.venv/
+env/
+virt
+
+# Data Bases
+db.sqlite3
+mydb.py
