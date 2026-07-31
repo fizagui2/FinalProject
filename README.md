@@ -144,7 +144,7 @@ The project follows the Agile methodology and is being developed in multiple day
 
 **Member 3**
 
-* Forum pages
+* Category pages
 
 ---
 
