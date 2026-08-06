@@ -1,0 +1,92 @@
+body{
+    margin:0;
+    padding:0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    color: white;
+    background: 
+        radial-gradient(circle at top left, rgba(114, 9, 183, .35), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(0, 180, 216, .25), transparent 30%),
+        linear-gradient(180deg, #111827, #0b1120);
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background-image:
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+    background-size:40px 40px;
+    pointer-events:none;
+}
+
+.home-container{
+    width: 90%;
+    max-width: 1400px;
+    margin: 40px auto;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 25px;
+}
+
+
+/* ==========================
+   Cards
+========================== */
+
+.game-card{
+    background: rgba(255,255,255,.05);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,.35);
+    transition: .25s ease;
+}
+
+.game-card:hover{
+    transform: translateY(-5px);
+    border-color: #7c3aed;
+    box-shadow: 0 10px 35px rgba(124,58,237,.35);
+}
+
+
+/* ==========================
+   Titles
+========================== */
+
+h1{
+    color: #6ee7ff;
+    text-align:center;
+    margin-bottom:20px;
+    font-weight:700;
+}
+
+h2{
+    color:#c084fc;
+    font-size:1.2rem;
+}
+
+
+/* ==========================
+   Navbar spacing
+========================== */
+
+main{
+    padding-top:30px;
+}
+
+.navbar{
+    background:#121826 !important;
+    border-bottom:1px solid #313a4d;
+}
+
+.nav-link{
+    color:white !important;
+}
+
+.nav-link:hover{
+
+    color:#8b5cf6 !important;
+
+}
