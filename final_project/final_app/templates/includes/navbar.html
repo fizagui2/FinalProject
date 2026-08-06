@@ -5,11 +5,11 @@
         <div class="collapse navbar-collapse d-lg-flex" id="navbarsExample11"> <a class="navbar-brand col-lg-3 me-0"
                 href="#">Game Universe</a>
             <ul class="navbar-nav col-lg-6 justify-content-lg-center">
-                <li class="nav-item"> <a class="nav-link active" aria-current="page" href="#">Home</a></li>
-                <li class="nav-item"> <a class="nav-link" href="#">Feed</a></li>
-                <li class="nav-item"> <a class="nav-link" href="#">Community</a></li>
-                <li class="nav-item"> <a class="nav-link" href="#">News</a></li>
-                <li class="nav-item dropdown"> <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
+                <li class="nav-item"> <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'categories' %}">Feed</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'forums' %}">Community</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'news' %}">News</a></li>
+                <li class="nav-item dropdown"> <a class="nav-link dropdown-toggle" href="{% url 'shop'%}" data-bs-toggle="dropdown"
                         aria-expanded="false">Store</a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="#">Videogames</a></li>
