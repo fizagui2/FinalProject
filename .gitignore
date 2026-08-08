@@ -7,3 +7,8 @@ virt
 # Data Bases
 db.sqlite3
 mydb.py
+
+# Compiled Python
+__pycache__/
+*.py[cod]
+*.pyc
