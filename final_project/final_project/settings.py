@@ -100,6 +100,17 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# Custom user model
+# https://docs.djangoproject.com/en/6.0/topics/auth/customizing/#substituting-a-custom-user-model
+# This has to stay pointed at final_app.User. Changing it once migrations have
+# been applied means dropping the database and starting the migrations over.
+
+AUTH_USER_MODEL = 'final_app.User'
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
