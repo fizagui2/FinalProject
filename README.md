@@ -113,9 +113,6 @@ The project follows the Agile methodology and is being developed in multiple day
 
 * Navigation system
 * User interface implementation
-(User Interface on home.html-work in progress)
-
-<img width="1882" height="842" alt="image" src="https://github.com/user-attachments/assets/184aa8af-1113-490a-bea8-027761db92f4" />
 
 ---
 
