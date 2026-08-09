@@ -1,18 +1,53 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.views import LoginView
 from django.contrib import messages
 from django.db.models import Sum, Value
 from django.db.models.functions import Coalesce
 from django.urls import reverse
 
+from .forms import SignUpForm
 from .models import Category, Post, Comment, Vote
 
 
 def home(request):
     return render(request, 'home.html', {})
 
-def login_view(request):
-    return render(request, 'login.html')
+
+class GameHubLoginView(LoginView):
+    """Renders the shared login/register page and authenticates the login form."""
+
+    template_name = 'login.html'
+    redirect_authenticated_user = True
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # The template shows Login and Register as tabs on one page, so the
+        # login view still needs an (empty) register form to render the tab.
+        context['register_form'] = SignUpForm()
+        context['active_tab'] = 'login'
+        return context
+
+
+def register_view(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            auth_login(request, user)  # log the new user straight in
+            return redirect('home')
+    else:
+        form = SignUpForm()
+
+    context = {
+        'form': AuthenticationForm(),
+        'register_form': form,
+        'active_tab': 'register',
+    }
+    return render(request, 'login.html', context)
+
 
 def feed(request):
     return render(request, 'categories.html')
