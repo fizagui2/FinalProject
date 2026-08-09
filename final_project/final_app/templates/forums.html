@@ -1,6 +1,185 @@
 {% extends 'base.html' %}
+{% load static %}
 
+{% block title %} Forums {% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="{% static 'css/forums.css' %}">
+{% endblock %}
 
 {% block content %}
-<div></div>
+<div class="container forum-header">
+    <h1>Forums</h1>
+    <p>Talk games, share news, and swap tips with the GameHub community.</p>
+</div>
+
+<div class="container">
+    <div class="row g-4">
+
+        <!-- Main feed -->
+        <div class="col-lg-8">
+
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-danger">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+
+            <!-- "Create a post" trigger bar -->
+            <div class="forum-panel create-post-bar" data-bs-toggle="modal" data-bs-target="#createPostModal">
+                <div class="avatar-circle">{{ user.username|first|upper|default:"?" }}</div>
+                <div class="fake-input">Create a post…</div>
+                <button type="button" class="btn btn-primary btn-sm">+ Post</button>
+            </div>
+
+            <!-- Category filters + sort tabs -->
+            <div class="forum-toolbar d-flex flex-wrap align-items-center justify-content-between gap-2">
+                <div class="d-flex flex-wrap gap-2">
+                    <button type="button" class="chip active" data-filter="all">All</button>
+                    {% for cat in categories %}
+                    <button type="button" class="chip" data-filter="{{ cat.id }}">{{ cat.name }}</button>
+                    {% endfor %}
+                </div>
+                <div class="d-flex gap-1">
+                    <button type="button" class="sort-tab active" data-sort="hot">🔥 Hot</button>
+                    <button type="button" class="sort-tab" data-sort="new">🆕 New</button>
+                    <button type="button" class="sort-tab" data-sort="top">⭐ Top</button>
+                </div>
+            </div>
+
+            <!-- Post feed -->
+            <div id="postFeed" class="d-flex flex-column gap-3">
+                {% for post in posts %}
+                <article id="post-{{ post.id }}" class="forum-panel post-card" data-category="{{ post.category.id }}" data-votes="{{ post.score }}" data-order="{{ forloop.counter0 }}">
+                    <div class="vote-col">
+                        <form method="post" action="{% url 'vote_post' post.id 'up' %}" class="vote-form">
+                            {% csrf_token %}
+                            <button type="submit" class="vote-btn upvote {% if post.user_vote == 1 %}active{% endif %}"><i class="bi bi-caret-up-fill"></i></button>
+                        </form>
+                        <span class="vote-count">{{ post.score }}</span>
+                        <form method="post" action="{% url 'vote_post' post.id 'down' %}" class="vote-form">
+                            {% csrf_token %}
+                            <button type="submit" class="vote-btn downvote {% if post.user_vote == -1 %}active{% endif %}"><i class="bi bi-caret-down-fill"></i></button>
+                        </form>
+                    </div>
+                    <div class="post-body-col">
+                        <div class="d-flex align-items-center gap-2 post-meta mb-1">
+                            <div class="avatar-circle avatar-sm">{{ post.author.username|first|upper }}</div>
+                            <span class="fw-semibold text-light">{{ post.author.username }}</span>
+                            &middot; <span class="category-tag">{{ post.category.name }}</span>
+                            &middot; {{ post.created_at|timesince }} ago
+                        </div>
+                        <h3 class="post-title">{{ post.title }}</h3>
+                        <p class="post-text">{{ post.body }}</p>
+                        <div class="post-actions">
+                            <button type="button" class="post-action-btn comments-toggle" data-comments-target="post-{{ post.id }}-comments">
+                                <i class="bi bi-chat-left-text"></i><span class="comment-count">{{ post.comments.count }}</span> Comments
+                            </button>
+                            <button type="button" class="post-action-btn"><i class="bi bi-share"></i>Share</button>
+                        </div>
+
+                        <div class="comments-panel d-none" id="post-{{ post.id }}-comments">
+                            <div class="comment-list">
+                                {% for comment in post.comments.all %}
+                                <div class="comment-item">
+                                    <div class="avatar-circle avatar-sm">{{ comment.author.username|first|upper }}</div>
+                                    <div class="comment-bubble">
+                                        <span class="comment-author">{{ comment.author.username }}</span>{{ comment.body }}
+                                        <span class="comment-time">{{ comment.created_at|timesince }} ago</span>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <form method="post" action="{% url 'add_comment' post.id %}" class="reply-form d-flex gap-2 mt-2">
+                                {% csrf_token %}
+                                <textarea name="body" class="form-control form-control-sm" rows="1" placeholder="Join the conversation…"></textarea>
+                                <button type="submit" class="btn btn-primary btn-sm">Reply</button>
+                            </form>
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- About Community sidebar -->
+        <div class="col-lg-4">
+            <aside class="forum-panel about-community">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <div class="avatar-circle">🎮</div>
+                    <h5 class="mb-0">GameHub Forums</h5>
+                </div>
+                <p>A community for gamers to share news, ask questions, and talk about everything from
+                    PlayStation to retro consoles.</p>
+
+                <div class="about-stats">
+                    <span>Members</span><strong>128,430</strong>
+                </div>
+                <div class="about-stats">
+                    <span>Online now</span><strong class="text-success">3,204</strong>
+                </div>
+                <div class="about-stats">
+                    <span>Founded</span><strong>2024</strong>
+                </div>
+
+                <button type="button" class="btn btn-primary w-100 mt-3" data-bs-toggle="modal" data-bs-target="#createPostModal">
+                    <i class="bi bi-plus-lg me-1"></i>Create Post
+                </button>
+
+                <hr class="border-secondary opacity-25 my-3">
+
+                <h6 class="text-light">Community Rules</h6>
+                <ol class="rules-list">
+                    <li>Be respectful — no harassment or hate speech.</li>
+                    <li>Keep posts on-topic for gaming.</li>
+                    <li>No spam or self-promotion.</li>
+                    <li>Mark spoilers clearly.</li>
+                </ol>
+            </aside>
+        </div>
+
+    </div>
+</div>
+
+<!-- Create Post modal -->
+<div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="createPostModalLabel">Create a Post</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createPostForm" method="post" action="{% url 'create_post' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="postTitleInput" class="form-label">Title</label>
+                        <input type="text" name="title" class="form-control" id="postTitleInput" placeholder="What do you want to discuss?" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="postCategoryInput" class="form-label">Category</label>
+                        <select name="category" class="form-select" id="postCategoryInput">
+                            {% for cat in categories %}
+                            <option value="{{ cat.id }}">{{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="postContentInput" class="form-label">Content</label>
+                        <textarea name="body" class="form-control" id="postContentInput" rows="4" placeholder="Share the details…" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-send me-1"></i>Post
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/forums.js' %}"></script>
 {% endblock %}

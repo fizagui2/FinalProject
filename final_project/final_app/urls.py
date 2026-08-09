@@ -6,6 +6,9 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('categories/', views.feed, name='categories'),
     path('forums/', views.community, name='forums'),
+    path('forums/post/create/', views.create_post, name='create_post'),
+    path('forums/post/<int:post_id>/comment/', views.add_comment, name='add_comment'),
+    path('forums/post/<int:post_id>/vote/<str:direction>/', views.vote_post, name='vote_post'),
     path('news/', views.news, name='news'),
     path('shop/', views.shop, name='shop'),
 ]
