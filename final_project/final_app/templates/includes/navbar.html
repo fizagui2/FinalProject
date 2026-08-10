@@ -24,12 +24,17 @@
                     </form>
                 </li>
             </ul>
-            <div class="d-lg-flex col-lg-3 justify-content-lg-end">
+            <div class="d-lg-flex col-lg-3 justify-content-lg-end gap-2">
                 {% if user.is_authenticated %}
                 <span class="btn btn-outline-light disabled">👤 {{ user.username }}</span>
-                <a href="{% url 'logout' %}" class="btn btn-primary">Logout</a>
+                <!-- Django 5+ only accepts POST for logout, so this has to be a form, not a plain link -->
+                <form method="post" action="{% url 'logout' %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">Logout</button>
+                </form>
                 {% else %}
-                <a href="{% url 'login' %}" class="btn btn-primary">👤Login</a>
+                <a href="{% url 'login' %}" class="btn btn-outline-light">👤Login</a>
+                <a href="{% url 'register' %}" class="btn btn-primary">Create Account</a>
                 {% endif %}
                 <button class="btn btn-primary">&#128722;My Cart</button>
             </div>
