@@ -2,40 +2,91 @@
 {% block title %} Login {% endblock %}
 
 {% block content %}
-<div class="modal modal-sheet position-static d-block bg-body-secondary p-4 py-md-5" tabindex="-1" role="dialog" id="modalSignin"> 
-    <div class="modal-dialog"> 
-        <div class="modal-content rounded-4 shadow"> 
-            <div class="modal-header p-5 pb-4 border-bottom-0"> 
-                <h1 class="fw-bold mb-0 fs-2">Sign up for free</h1> 
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> 
-            </div> 
-            <div class="modal-body p-5 pt-0"> 
-                <form class=""> 
-                    <div class="form-floating mb-3"> 
-                        <input type="email" class="form-control rounded-3" id="floatingInput" placeholder="name@example.com"> 
-                        <label for="floatingInput">Email address</label> 
-                    </div> 
-                    <div class="form-floating mb-3"> 
-                            <input type="password" class="form-control rounded-3" id="floatingPassword" placeholder="Password"> 
-                            <label for="floatingPassword">Password</label> 
-                    </div> 
-                    <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Sign up</button> 
-                    <small class="text-body-secondary">By clicking Sign up, you agree to the terms of use.</small> 
-                    <hr class="my-4"> 
-                    <h2 class="fs-5 fw-bold mb-3">Or use a third-party</h2> 
-                    <button class="w-100 py-2 mb-2 btn btn-outline-secondary rounded-3" type="submit"> 
-                        <svg class="bi me-1" width="16" height="16" aria-hidden="true"><use xlink:href="#google"></use></svg>Sign up with Google
-                    </button> 
-                    <button class="w-100 py-2 mb-2 btn btn-outline-primary rounded-3" type="submit"> 
-                        <svg class="bi me-1" width="16" height="16" aria-hidden="true"><use xlink:href="#facebook"></use></svg>Sign up with Facebook
-                    </button> 
-                    <button class="w-100 py-2 mb-2 btn btn-outline-secondary rounded-3" type="submit"> 
-                        <svg class="bi me-1" width="16" height="16" aria-hidden="true"><use xlink:href="#github"></use></svg>Sign up with GitHub
-                    </button>
-                </form> 
-            </div> 
-        </div> 
-    </div> 
-</div>
+<div class="modal modal-sheet position-static d-block bg-body-secondary p-4 py-md-5" tabindex="-1" role="dialog" id="modalSignin">
+    <div class="modal-dialog">
+        <div class="modal-content rounded-4 shadow">
+            <div class="modal-header p-5 pb-4 border-bottom-0">
+                <h1 class="fw-bold mb-0 fs-2">Welcome to GameHub</h1>
+            </div>
+            <div class="modal-body p-5 pt-0">
 
+                <!-- Tabs: Log In / Create Account -->
+                <ul class="nav nav-pills nav-fill mb-4" id="authTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link {% if active_tab == 'login' %}active{% endif %}" id="tab-login-btn"
+                                data-bs-toggle="pill" data-bs-target="#tab-login" type="button" role="tab">
+                            Log In
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link {% if active_tab == 'register' %}active{% endif %}" id="tab-register-btn"
+                                data-bs-toggle="pill" data-bs-target="#tab-register" type="button" role="tab">
+                            Create Account
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+
+                    <!-- Log in -->
+                    <div class="tab-pane fade {% if active_tab == 'login' %}show active{% endif %}" id="tab-login" role="tabpanel">
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">{{ form.non_field_errors|striptags }}</div>
+                        {% endif %}
+                        <form method="post" action="{% url 'login' %}">
+                            {% csrf_token %}
+                            <div class="form-floating mb-3">
+                                <input type="text" name="username" class="form-control rounded-3" id="loginUsername"
+                                       placeholder="Username" value="{{ form.username.value|default:'' }}" autofocus>
+                                <label for="loginUsername">Username</label>
+                                {% if form.username.errors %}<div class="text-danger small mt-1">{{ form.username.errors|striptags }}</div>{% endif %}
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="password" name="password" class="form-control rounded-3" id="loginPassword" placeholder="Password">
+                                <label for="loginPassword">Password</label>
+                                {% if form.password.errors %}<div class="text-danger small mt-1">{{ form.password.errors|striptags }}</div>{% endif %}
+                            </div>
+                            <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Login</button>
+                        </form>
+                    </div>
+
+                    <!-- Register -->
+                    <div class="tab-pane fade {% if active_tab == 'register' %}show active{% endif %}" id="tab-register" role="tabpanel">
+                        {% if register_form.non_field_errors %}
+                        <div class="alert alert-danger">{{ register_form.non_field_errors|striptags }}</div>
+                        {% endif %}
+                        <form method="post" action="{% url 'register' %}">
+                            {% csrf_token %}
+                            <div class="form-floating mb-3">
+                                <input type="text" name="username" class="form-control rounded-3" id="registerUsername"
+                                       placeholder="Username" value="{{ register_form.username.value|default:'' }}">
+                                <label for="registerUsername">Username</label>
+                                {% if register_form.username.errors %}<div class="text-danger small mt-1">{{ register_form.username.errors|striptags }}</div>{% endif %}
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="email" name="email" class="form-control rounded-3" id="registerEmail"
+                                       placeholder="name@example.com" value="{{ register_form.email.value|default:'' }}">
+                                <label for="registerEmail">Email address</label>
+                                {% if register_form.email.errors %}<div class="text-danger small mt-1">{{ register_form.email.errors|striptags }}</div>{% endif %}
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="password" name="password1" class="form-control rounded-3" id="registerPassword1" placeholder="Password">
+                                <label for="registerPassword1">Password</label>
+                                {% if register_form.password1.errors %}<div class="text-danger small mt-1">{{ register_form.password1.errors|striptags }}</div>{% endif %}
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="password" name="password2" class="form-control rounded-3" id="registerPassword2" placeholder="Confirm password">
+                                <label for="registerPassword2">Confirm Password</label>
+                                {% if register_form.password2.errors %}<div class="text-danger small mt-1">{{ register_form.password2.errors|striptags }}</div>{% endif %}
+                            </div>
+                            <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Register</button>
+                            <small class="text-body-secondary">By clicking Register, you agree to the terms of use.</small>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
