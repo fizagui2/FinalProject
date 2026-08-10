@@ -1,0 +1,397 @@
+/* ==========================================================================
+   Forums page — Reddit-style discussion board.
+   Scoped to forums.html only (loaded via {% block extra_css %}); reuses the
+   glassmorphism look already established in static/css/styles.css
+   (.game-card, cyan/purple palette) so it feels like part of the same site.
+   ========================================================================== */
+
+.forum-header h1 {
+  margin-bottom: 0.25rem;
+}
+
+.forum-header p {
+  text-align: center;
+  color: #9ca3af;
+  margin-bottom: 1.75rem;
+}
+
+/* Reusable "glass card" base, matching .game-card from styles.css */
+.forum-panel {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+}
+
+/* -------------------------------------------------------------------- */
+/* "Create a post" trigger bar                                          */
+/* -------------------------------------------------------------------- */
+.create-post-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.create-post-bar:hover {
+  border-color: #7c3aed;
+}
+
+.create-post-bar .fake-input {
+  flex-grow: 1;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  color: #9ca3af;
+}
+
+/* -------------------------------------------------------------------- */
+/* Avatars                                                               */
+/* -------------------------------------------------------------------- */
+.avatar-circle {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed, #38bdf8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #fff;
+}
+
+.avatar-circle.avatar-sm {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  font-size: 0.8rem;
+}
+
+/* -------------------------------------------------------------------- */
+/* Toolbar: category chips + sort tabs                                  */
+/* -------------------------------------------------------------------- */
+.forum-toolbar {
+  margin-bottom: 1.25rem;
+}
+
+.chip {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #d1d5db;
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.85rem;
+  transition: 0.2s ease;
+}
+
+.chip:hover {
+  border-color: #7c3aed;
+  color: #fff;
+}
+
+.chip.active {
+  background: #7c3aed;
+  border-color: #7c3aed;
+  color: #fff;
+}
+
+.sort-tab {
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  transition: 0.2s ease;
+}
+
+.sort-tab:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.sort-tab.active {
+  color: #6ee7ff;
+  background: rgba(110, 231, 255, 0.1);
+}
+
+/* -------------------------------------------------------------------- */
+/* Post card                                                             */
+/* -------------------------------------------------------------------- */
+.post-card {
+  display: flex;
+  padding: 0;
+  overflow: hidden;
+  transition: 0.25s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-3px);
+  border-color: #7c3aed;
+  box-shadow: 0 10px 35px rgba(124, 58, 237, 0.35);
+}
+
+.post-card.d-none {
+  display: none !important;
+}
+
+/* Reddit-style vote column */
+.vote-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 1rem 0.6rem;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Each vote arrow is its own tiny <form> (real POST, no JS) — undo the
+   browser's default form margin so it doesn't disturb the vote column. */
+.vote-form {
+  margin: 0;
+}
+
+.vote-btn {
+  background: transparent;
+  border: none;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 6px;
+  color: #6b7280;
+  transition: 0.15s ease;
+}
+
+.vote-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.vote-btn .bi {
+  font-size: 1.1rem;
+}
+
+.vote-btn.upvote.active {
+  color: #c084fc;
+}
+
+.vote-btn.downvote.active {
+  color: #38bdf8;
+}
+
+.vote-count {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #e5e7eb;
+}
+
+.post-body-col {
+  flex: 1;
+  min-width: 0;
+  padding: 1rem 1.25rem;
+}
+
+.post-meta {
+  font-size: 0.82rem;
+  color: #9ca3af;
+}
+
+.post-meta .category-tag {
+  color: #6ee7ff;
+  font-weight: 600;
+}
+
+.post-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #f3f4f6;
+  margin: 0.3rem 0 0.4rem;
+}
+
+.post-text {
+  color: #d1d5db;
+  font-size: 0.92rem;
+  margin-bottom: 0.75rem;
+}
+
+.post-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.post-action-btn {
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: 0.15s ease;
+}
+
+.post-action-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+/* -------------------------------------------------------------------- */
+/* Comments panel                                                        */
+/* -------------------------------------------------------------------- */
+.comments-panel {
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.comments-panel.d-none {
+  display: none !important;
+}
+
+.comment-item {
+  display: flex;
+  gap: 0.6rem;
+  padding: 0.55rem 0;
+}
+
+.comment-bubble {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.87rem;
+  flex-grow: 1;
+}
+
+.comment-bubble .comment-author {
+  font-weight: 700;
+  color: #c084fc;
+  margin-right: 0.35rem;
+}
+
+.comment-bubble .comment-time {
+  color: #6b7280;
+  font-size: 0.75rem;
+  margin-left: 0.4rem;
+}
+
+.reply-form textarea {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f3f4f6;
+  border-radius: 10px;
+  resize: none;
+}
+
+.reply-form textarea:focus {
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 0.15rem rgba(124, 58, 237, 0.35);
+  outline: none;
+}
+
+/* -------------------------------------------------------------------- */
+/* About Community sidebar                                              */
+/* -------------------------------------------------------------------- */
+.about-community {
+  padding: 1.25rem;
+  position: sticky;
+  top: 1rem;
+}
+
+.about-community h5 {
+  color: #6ee7ff;
+  font-weight: 700;
+}
+
+.about-community p {
+  color: #d1d5db;
+  font-size: 0.88rem;
+}
+
+.about-stats {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  font-size: 0.88rem;
+  color: #d1d5db;
+}
+
+.about-stats strong {
+  color: #fff;
+}
+
+.about-community .rules-list {
+  padding-left: 1.1rem;
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.about-community .rules-list li {
+  margin-bottom: 0.4rem;
+}
+
+/* -------------------------------------------------------------------- */
+/* Create Post modal                                                    */
+/* -------------------------------------------------------------------- */
+#createPostModal .modal-content {
+  background: #121826;
+  border: 1px solid #313a4d;
+  color: #f3f4f6;
+}
+
+#createPostModal .form-control,
+#createPostModal .form-select {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f3f4f6;
+}
+
+#createPostModal .form-control:focus,
+#createPostModal .form-select:focus {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 0.2rem rgba(124, 58, 237, 0.3);
+}
+
+#createPostModal .form-control::placeholder {
+  color: #6b7280;
+}
+
+#createPostModal .btn-close {
+  filter: invert(1);
+}
+
+/* -------------------------------------------------------------------- */
+/* New-post entry animation (used by forums.js when a post is submitted) */
+/* -------------------------------------------------------------------- */
+@keyframes forum-post-in {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.post-card.just-added {
+  animation: forum-post-in 0.4s ease both;
+}
+
+@media (max-width: 991.98px) {
+  .about-community {
+    position: static;
+    margin-top: 1.5rem;
+  }
+}
