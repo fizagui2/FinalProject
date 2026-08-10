@@ -10,6 +10,7 @@ As a user, I want to be able to upvote and downvote posts, so that I can see wha
 
 ## Authentication
 
+As a visitor, I want to create an account, so that I can post in forums and buy listed items.
 As a signed-up or registered user, I want to log in, so that I can access my account.
 As a signed up or registered user, I want to be able to add listed items to my account cart.
 As a signed up or registered user, I want to be able to sign out of my account, so that I don't accidentally add items to my cart.
