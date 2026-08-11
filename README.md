@@ -175,4 +175,4 @@ The project follows the Agile methodology and is being developed in multiple day
 
 ---
 ## Diagram Links (figma)
-* Login example: https://www.figma.com/make/IpNN26CQuOhhxj7CDlgs2a/Social-Media-Login-Page?fullscreen=1&t=zgBpAy4ZkkXY6zwg-1&code-node-id=0-9
+* Login example: https://www.figma.com/make/IpNN26CQuOhhxj7CDlgs2a/Social-Media-Login-Page?fullscreen=1&t=h0iTZSRi3u8tJZ81-1&code-node-id=0-9
