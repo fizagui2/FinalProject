@@ -172,3 +172,7 @@ The project follows the Agile methodology and is being developed in multiple day
 * Bug fixes
 * Documentation
 * User manual preparation
+
+---
+## Diagram Links (figma)
+* Login example: https://www.figma.com/make/IpNN26CQuOhhxj7CDlgs2a/Social-Media-Login-Page?fullscreen=1&t=zgBpAy4ZkkXY6zwg-1&code-node-id=0-9
