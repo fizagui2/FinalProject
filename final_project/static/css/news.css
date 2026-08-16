@@ -1,0 +1,472 @@
+/* ==========================================================================
+   News page — editorial-style gaming news feed.
+   Scoped to news.html only (loaded via {% block extra_css %}). Layout is
+   modeled on a minimal magazine/hero-plus-grid format: flat images (no card
+   chrome), hashtag-style labels, and a text "Read More" link rather than
+   boxed cards — restyled with the site's existing purple/cyan palette
+   (matches static/css/styles.css) instead of a plain black-and-white look.
+   ========================================================================== */
+
+.news-page {
+  padding-top: 1rem;
+  /* Headlines use a distinct display font for hierarchy; body copy, tags,
+     and controls stay on the site's normal Segoe UI stack (set globally
+     on <body> in styles.css), so it's only applied to headline classes below. */
+  --display-font: "Space Grotesk", "Segoe UI", sans-serif;
+}
+
+/* -------------------------------------------------------------------- */
+/* Section header: "Latest News" + "View All"                           */
+/* -------------------------------------------------------------------- */
+.news-top-bar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.news-kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: #6ee7ff;
+  text-align: left;
+  font-family: var(--display-font);
+  font-size: 2.1rem;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin: 0;
+}
+
+.news-kicker::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: linear-gradient(135deg, #7c3aed, #38bdf8);
+}
+
+.news-viewall {
+  color: #9ca3af;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+  padding-bottom: 0.3rem;
+  transition: color 0.2s ease, gap 0.2s ease;
+}
+
+.news-viewall:hover {
+  color: #6ee7ff;
+  gap: 0.55rem;
+}
+
+.news-divider {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 1rem 0 2rem;
+}
+
+/* -------------------------------------------------------------------- */
+/* Section labels ("Trending News", "News", ...)                        */
+/* -------------------------------------------------------------------- */
+.section-label {
+  color: #f3f4f6;
+  font-family: var(--display-font);
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-left: 3px solid #7c3aed;
+  padding-left: 0.65rem;
+  line-height: 1.2;
+}
+
+/* -------------------------------------------------------------------- */
+/* Featured story                                                        */
+/* -------------------------------------------------------------------- */
+.featured-row {
+  margin-bottom: 0;
+}
+
+.featured-media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.35), rgba(56, 189, 248, 0.2)), #121826;
+  font-size: 6rem;
+  color: #c084fc;
+}
+
+.news-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+}
+
+.news-tag {
+  color: #6ee7ff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.featured-headline {
+  font-family: var(--display-font);
+  font-size: clamp(1.75rem, 2.8vw, 2.75rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  color: #f8fafc;
+  margin: 0.9rem 0 1rem;
+}
+
+.featured-excerpt {
+  color: #9ca3af;
+  font-size: 1rem;
+  line-height: 1.65;
+  margin-bottom: 1.4rem;
+}
+
+.read-more-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #c084fc;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  align-self: flex-start;
+  transition: color 0.2s ease, gap 0.2s ease;
+}
+
+.read-more-link:hover {
+  color: #fff;
+  gap: 0.6rem;
+}
+
+/* -------------------------------------------------------------------- */
+/* Popular News sidebar                                                 */
+/* -------------------------------------------------------------------- */
+.popular-panel {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 1.1rem;
+}
+
+.popular-list {
+  margin-top: 0.9rem;
+}
+
+.popular-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  background: none;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.6rem 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.popular-item:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.popular-thumb {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.35), rgba(56, 189, 248, 0.2));
+  color: #c084fc;
+  font-size: 0.95rem;
+}
+
+.popular-title {
+  flex-grow: 1;
+  font-family: var(--display-font);
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #e5e7eb;
+  transition: color 0.2s ease;
+}
+
+.popular-arrow {
+  color: #6b7280;
+  font-size: 0.8rem;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.popular-item:hover .popular-title {
+  color: #6ee7ff;
+}
+
+.popular-item:hover .popular-arrow {
+  color: #6ee7ff;
+  transform: translateX(3px);
+}
+
+/* -------------------------------------------------------------------- */
+/* Trending News row                                                    */
+/* -------------------------------------------------------------------- */
+.trending-card {
+  display: block;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.trending-card:hover {
+  border-color: #7c3aed;
+  transform: translateY(-3px);
+}
+
+.trending-media {
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.3), rgba(56, 189, 248, 0.16));
+  font-size: 2rem;
+  color: #c084fc;
+}
+
+.trending-title {
+  font-family: var(--display-font);
+  font-size: 1.08rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #f3f4f6;
+  margin: 0.5rem 0 0.4rem;
+}
+
+.trending-excerpt {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #9ca3af;
+  margin: 0;
+}
+
+/* -------------------------------------------------------------------- */
+/* Sort tabs (Latest / Trending / Popular)                              */
+/* -------------------------------------------------------------------- */
+.sort-tabs {
+  margin-bottom: 0.75rem;
+}
+
+.sort-tab {
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-weight: 700;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.32rem 0.65rem;
+  border-radius: 6px;
+  transition: 0.2s ease;
+}
+
+.sort-tab:hover {
+  color: #d1d5db;
+}
+
+.sort-tab.active {
+  color: #6ee7ff;
+  background: rgba(110, 231, 255, 0.1);
+}
+
+/* -------------------------------------------------------------------- */
+/* Category filters                                                     */
+/* -------------------------------------------------------------------- */
+.news-filters {
+  margin-bottom: 1.5rem;
+}
+
+.tag-chip {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #9ca3af;
+  border-radius: 999px;
+  padding: 0.32rem 0.9rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+.tag-chip:hover {
+  border-color: #7c3aed;
+  color: #fff;
+}
+
+.tag-chip.active {
+  background: #7c3aed;
+  border-color: #7c3aed;
+  color: #fff;
+}
+
+/* -------------------------------------------------------------------- */
+/* Secondary story grid — flat images, no card chrome                   */
+/* -------------------------------------------------------------------- */
+.article-col.d-none {
+  display: none !important;
+}
+
+.article-card {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.article-media {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.28), rgba(56, 189, 248, 0.16)), #121826;
+  font-size: 2.4rem;
+  color: #c084fc;
+}
+
+.article-media .bi,
+.article-media img {
+  transition: transform 0.3s ease;
+}
+
+.article-card:hover .article-media .bi,
+.article-card:hover .article-media img {
+  transform: scale(1.12);
+}
+
+.article-media-overlay {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 0.55rem 0.65rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+}
+
+.article-tag {
+  color: #6ee7ff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.article-headline {
+  margin: 0.7rem 0 0;
+  font-family: var(--display-font);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #f3f4f6;
+  transition: color 0.2s ease;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.article-card:hover .article-headline {
+  color: #c084fc;
+}
+
+/* -------------------------------------------------------------------- */
+/* Real images (optional) — when an article dict includes an "image"    */
+/* path, the template renders an <img> instead of the icon placeholder. */
+/* Every media container above is already sized (aspect-ratio + flex    */
+/* centering), so the image just needs to fill it and crop to fit.      */
+/* -------------------------------------------------------------------- */
+.featured-media img,
+.trending-media img,
+.article-media img,
+.popular-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* -------------------------------------------------------------------- */
+/* Read More modal                                                      */
+/* -------------------------------------------------------------------- */
+.news-article-modal .modal-content {
+  background: #121826;
+  border: 1px solid #313a4d;
+  color: #f3f4f6;
+}
+
+.news-article-modal .modal-title {
+  font-family: var(--display-font);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.news-article-modal .modal-body p {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #d1d5db;
+}
+
+.news-article-modal .btn-close {
+  filter: invert(1);
+}
+
+.news-article-modal .modal-header {
+  border-bottom-color: #313a4d;
+}
+
+.news-article-modal .article-tag {
+  display: inline-block;
+}
+
+.news-article-modal .article-meta {
+  color: #6b7280;
+  font-size: 0.82rem;
+}
+
+@media (max-width: 767.98px) {
+  .news-top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
