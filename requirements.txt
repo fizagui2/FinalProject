@@ -1,4 +1,5 @@
 Django==6.0.7
+Pillow==12.3.0
 
 # Django dependencies (installed automatically, pinned for reproducibility)
 asgiref==3.12.1
