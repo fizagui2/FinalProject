@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from .models import (Category, User, Product, Cart, CartItem, Order, OrderItem, )
+from .models import Category, User
 
 
 @admin.register(User)

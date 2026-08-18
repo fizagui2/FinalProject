@@ -29,6 +29,7 @@
                 {% if user.is_authenticated %}
                 <span class="btn btn-outline-light disabled">👤 {{ user.username }}</span>
                 <a href="{% url 'cart' %}" class="btn btn-primary">🛒 My Cart</a>
+                <!-- Django 5+ only accepts POST for logout, so this has to be a form, not a plain link -->
                 <form method="post" action="{% url 'logout' %}" class="d-inline">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-primary">Logout</button>
@@ -39,6 +40,7 @@
                 {% endif %}
                 
                 
+                <button class="btn btn-primary">&#128722;My Cart</button>
             </div>
         </div>
     </div>

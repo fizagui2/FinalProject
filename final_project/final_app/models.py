@@ -3,6 +3,8 @@ from django.db import models
 from django.conf import settings
 from decimal import Decimal
 
+
+
 class User(AbstractUser):
     """The project's user account.
 
@@ -11,6 +13,7 @@ class User(AbstractUser):
     Swapping AUTH_USER_MODEL after the first migration is applied is very
     painful, which is why this exists up front even though it is nearly empty.
     """
+
     display_name = models.CharField(max_length=50, blank=True)
     bio = models.TextField(blank=True)
 
@@ -20,6 +23,7 @@ class User(AbstractUser):
 
 class Category(models.Model):
     """A gaming category that news articles and forum posts belong to."""
+
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -13,6 +13,8 @@ from django.db import transaction
 from .forms import SignUpForm
 from .models import (Category, Post, Comment, Vote, Product, Cart, CartItem, Order, OrderItem, )
 
+from .forms import SignUpForm
+from .models import Category, Post, Comment, Vote
 
 
 def home(request):
