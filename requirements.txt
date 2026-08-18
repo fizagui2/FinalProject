@@ -1,4 +1,7 @@
 Django==6.0.7
+psycopg[binary]==3.3.4
+python-dotenv==1.2.3
+Pillow==12.3.0
 
 # Django dependencies (installed automatically, pinned for reproducibility)
 asgiref==3.12.1

@@ -10,22 +10,45 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+from django.core.exceptions import ImproperlyConfigured
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Real credentials live in .env at the repo root, which is gitignored. Copy
+# .env.example to .env and fill it in; that file says where the values come from.
+load_dotenv(BASE_DIR.parent / '.env')
+
+
+def env(name, default=None, required=False):
+    """Read a setting from the environment, falling back to .env."""
+    value = os.environ.get(name, default)
+    if required and not value:
+        raise ImproperlyConfigured(
+            f"{name} is not set. Copy .env.example to .env at the repo root and "
+            f"fill it in (ask the team for the shared Supabase credentials)."
+        )
+    return value
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-w37y!2gj-fg(0s=-#19q+1zqmjnak)m87aa%44h$qwe+2jpff!'
+SECRET_KEY = env('DJANGO_SECRET_KEY', required=True)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DJANGO_DEBUG', 'True').lower() in ('1', 'true', 'yes', 'on')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in env('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+    if host.strip()
+]
 
 
 # Application definition
@@ -75,10 +98,22 @@ WSGI_APPLICATION = 'final_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('DB_NAME', required=True),
+        'USER': env('DB_USER', required=True),
+        'PASSWORD': env('DB_PASSWORD', required=True),
+        'HOST': env('DB_HOST', required=True),
+        'PORT': env('DB_PORT', '5432'),
+        'CONN_MAX_AGE': 60,
+        # Supabase requires TLS.
+        'OPTIONS': {'sslmode': 'require'},
     }
 }
+
+# Supabase's transaction pooler (port 6543) hands each statement a different
+# backend, so server side cursors cannot survive between them.
+if DATABASES['default']['PORT'] == '6543':
+    DATABASES['default']['DISABLE_SERVER_SIDE_CURSORS'] = True
 
 
 # Password validation
