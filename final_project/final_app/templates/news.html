@@ -1,2 +1,212 @@
 {% extends 'base.html' %}
-news website
+{% load static %}
+
+{% block title %} News {% endblock %}
+
+{% block extra_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="{% static 'css/news.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container news-page">
+
+    <div class="news-top-bar">
+        <h1 class="news-kicker">Latest News</h1>
+        <a href="#" class="news-viewall">View All <i class="bi bi-arrow-right"></i></a>
+    </div>
+    <hr class="news-divider">
+
+    <!-- Featured story + Popular News sidebar -->
+    <div class="row g-4 featured-row">
+        {% if featured_article %}
+        <div class="col-lg-8">
+            <div class="row g-4 align-items-center h-100">
+                <div class="col-md-6">
+                    <div class="featured-media">
+                        {% if featured_article.image %}
+                        <img src="{% static featured_article.image %}" alt="{{ featured_article.title }}">
+                        {% else %}
+                        <i class="bi {{ featured_article.icon }}"></i>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6 d-flex flex-column">
+                    <div class="news-tags">
+                        {% for tag in featured_article.tags %}
+                        <span class="news-tag">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                    <h2 class="featured-headline">{{ featured_article.title }}</h2>
+                    <p class="featured-excerpt">{{ featured_article.excerpt }}</p>
+                    <button type="button" class="read-more-link" data-bs-toggle="modal" data-bs-target="#articleModal-featured">
+                        Read More <i class="bi bi-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="col-lg-4">
+            <div class="popular-panel h-100">
+                <div class="section-label">Popular News</div>
+                <div class="popular-list">
+                    {% for item in popular_news %}
+                    <button type="button" class="popular-item" data-bs-toggle="modal" data-bs-target="#articleModal-pop-{{ forloop.counter }}">
+                        <span class="popular-thumb">
+                            {% if item.image %}
+                            <img src="{% static item.image %}" alt="">
+                            {% else %}
+                            <i class="bi {{ item.icon }}"></i>
+                            {% endif %}
+                        </span>
+                        <span class="popular-title">{{ item.title }}</span>
+                        <i class="bi bi-arrow-right popular-arrow"></i>
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trending News -->
+    {% if trending_articles %}
+    <div class="section-label mt-5 mb-3">Trending News</div>
+    <div class="row g-4 mb-5">
+        {% for item in trending_articles %}
+        <div class="col-md-4">
+            <button type="button" class="trending-card" data-bs-toggle="modal" data-bs-target="#articleModal-trend-{{ forloop.counter }}">
+                <div class="trending-media">
+                    {% if item.image %}
+                    <img src="{% static item.image %}" alt="{{ item.title }}">
+                    {% else %}
+                    <i class="bi {{ item.icon }}"></i>
+                    {% endif %}
+                </div>
+                <span class="article-tag">{{ item.category }}</span>
+                <h3 class="trending-title">{{ item.title }}</h3>
+                <p class="trending-excerpt">{{ item.excerpt }}</p>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- News grid -->
+    <div class="section-label mb-3">News</div>
+
+    <div class="sort-tabs d-flex flex-wrap gap-1 mb-2">
+        <button type="button" class="sort-tab active" data-sort="latest">Latest</button>
+        <button type="button" class="sort-tab" data-sort="trending">Trending</button>
+        <button type="button" class="sort-tab" data-sort="popular">Popular</button>
+    </div>
+
+    <div class="news-filters d-flex flex-wrap gap-2">
+        <button type="button" class="tag-chip active" data-filter="all">All</button>
+        {% for cat in news_categories %}
+        <button type="button" class="tag-chip" data-filter="{{ cat.slug }}">{{ cat.name }}</button>
+        {% endfor %}
+    </div>
+
+    <div id="newsGrid" class="row g-3">
+        {% for article in articles %}
+        <div class="col-6 col-lg-3 article-col" data-category="{{ article.category_slug }}"
+             data-order="{{ forloop.counter0 }}" data-views="{{ article.views }}" data-trend="{{ article.trend_rank }}">
+            <button type="button" class="article-card"
+                    data-bs-toggle="modal" data-bs-target="#articleModal-{{ forloop.counter }}">
+                <div class="article-media">
+                    {% if article.image %}
+                    <img src="{% static article.image %}" alt="{{ article.title }}">
+                    {% else %}
+                    <i class="bi {{ article.icon }}"></i>
+                    {% endif %}
+                    <div class="article-media-overlay">
+                        <span class="article-tag">{{ article.tag }}</span>
+                    </div>
+                </div>
+                <h3 class="article-headline">{{ article.title }}</h3>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+<!-- Read More modals -->
+{% if featured_article %}
+<div class="modal fade news-article-modal" id="articleModal-featured" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ featured_article.title }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <span class="article-tag">{{ featured_article.category }}</span>
+                <p class="article-meta my-2">{{ featured_article.source }} &middot; {{ featured_article.date }}</p>
+                <p>{{ featured_article.body }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% for item in popular_news %}
+<div class="modal fade news-article-modal" id="articleModal-pop-{{ forloop.counter }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ item.title }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Full coverage for this story is coming soon.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% for item in trending_articles %}
+<div class="modal fade news-article-modal" id="articleModal-trend-{{ forloop.counter }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ item.title }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <span class="article-tag">{{ item.category }}</span>
+                <p>{{ item.excerpt }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% for article in articles %}
+<div class="modal fade news-article-modal" id="articleModal-{{ forloop.counter }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ article.title }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <span class="article-tag">{{ article.category }}</span>
+                <p class="article-meta my-2">{{ article.source }} &middot; {{ article.date }}</p>
+                <p>{{ article.body }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/news.js' %}"></script>
+{% endblock %}
