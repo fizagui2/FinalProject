@@ -14,4 +14,6 @@ urlpatterns = [
     path('forums/post/<int:post_id>/vote/<str:direction>/', views.vote_post, name='vote_post'),
     path('news/', views.news, name='news'),
     path('shop/', views.shop, name='shop'),
+    path('shop/cart/', views.cart, name='cart'),
+    path('aboutus/', views.aboutus, name='aboutus'),
 ]

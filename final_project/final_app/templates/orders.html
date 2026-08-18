@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}My Orders | Game Universe{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">My Orders</h1>
+    {% for order in orders %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <strong>Order #{{ order.id }}</strong>
+                </div>
+
+                <div class="col-md-3">{{ order.created_at|date:"M d, Y" }}</div>
+                <div class="col-md-2">${{ order.total }}</div>
+                <div class="col-md-2">
+                    <span class="badge bg-primary">{{ order.get_status_display }}</span>
+                </div>
+                <div class="col-md-2">
+                    <a href="{% url 'order_detail' order.id %}" class="btn btn-outline-primary">View</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>You haven't placed any orders yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}

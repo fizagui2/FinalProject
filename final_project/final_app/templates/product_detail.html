@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }} | Game Universe{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row g-5">
+        <div class="col-md-6">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" class="img-fluid rounded shadow" alt="{{ product.name }}">
+            {% else %}
+            <div class="bg-dark text-white rounded d-flex align-items-center justify-content-center" style="height: 400px;">No image available</div>
+            {% endif %}
+        </div>
+
+        <div class="col-md-6">
+            <span class="badge bg-secondary mb-3">{{ product.get_product_type_display }}</span>
+
+            <h1>{{ product.name }}</h1>
+            <h2 class="my-3">${{ product.price }}</h2>
+            <p>{{ product.description }}</p>
+
+            {% if product.stock > 0 %}
+            <p class="text-success">{{ product.stock }} available</p>
+
+            <form method="POST" action="{% url 'add_to_cart' product.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary btn-lg">🛒 Add to Cart</button>
+            </form>
+
+            {% else %}
+            <div class="alert alert-danger">This product is currently out of stock.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

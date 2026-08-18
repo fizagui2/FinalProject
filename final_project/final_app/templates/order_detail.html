@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Order #{{ order.id }} | Game Universe{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1>Order #{{ order.id }}</h1>
+    <p class="text-muted">{{ order.created_at|date:"F d, Y H:i" }}</p>
+    <p>Status:
+        <span class="badge bg-primary">{{ order.get_status_display }}</span>
+    </p>
+    <hr>
+    {% for item in order.items.all %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <h5>{{ item.product_name }}</h5>
+                    <p class="text-muted">${{ item.price }} x {{ item.quantity }}</p>
+                </div>
+                <strong>${{ item.subtotal }}</strong>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="text-end">
+        <h3>Total: ${{ order.total }}</h3>
+    </div>
+</div>
+{% endblock %}

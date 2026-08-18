@@ -133,3 +133,6 @@ STATICFILES_DIRS = [
     BASE_DIR / STATIC_URL,
 ]
 STATIC_ROOT = BASE_DIR / "assets"
+
+MEDIA_URL = '/meta/'
+MEDIA_ROOT = BASE_DIR / 'media'

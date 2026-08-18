@@ -8,6 +8,11 @@ from django.db.models import Sum, Value
 from django.db.models.functions import Coalesce
 from django.urls import reverse
 
+from django.db import transaction
+
+from .forms import SignUpForm
+from .models import (Category, Post, Comment, Vote, Product, Cart, CartItem, Order, OrderItem, )
+
 from .forms import SignUpForm
 from .models import Category, Post, Comment, Vote, User
 
@@ -324,5 +329,109 @@ def news(request):
     }
     return render(request, 'news.html', context)
 
+# >> shop stuff
 def shop(request):
-    return render(request, 'shop.html')
+    products = Product.objects.select_related('category').all()
+    product_type = request.GET.get('type')
+    category_id = request.GET.get('category')
+    if product_type:
+        products = products.filter(product_type=product_type)
+    if category_id:
+        products = products.filter(category_id=category_id)
+    categories = Category.objects.all()
+    context = {'products':products, 'categories':categories,}
+    return render(request, 'shop.html', context)
+
+def product_detail(request, slug):
+    product = get_object_or_404(Product.objects.select_related('category'), slug=slug)
+    return render(request, 'product_detail.html', {'product':product})
+
+@login_required
+def cart(request):
+    user_cart, created = Cart.objects.get_or_create(user=request.user)
+    items = user_cart.items.select_related('product')
+    context = {'cart':user_cart,'items':items,}
+    return render(request, 'cart.html', context)
+
+@login_required
+def add_to_cart(request, product_id):
+    if request.method != 'POST':
+        return redirect('shop')
+    product = get_object_or_404(Product, id=product_id)
+    if product.stock <= 0:
+        messages.error(request, f'{product.name} is currently out of stock.')
+    user_cart, created = Cart.objects.get_or_create(user=request.user)
+    item, created = CartItem.objects.get_or_create(cart=user_cart, product=product)
+
+    if created:
+        item.quantity = 1
+    else:
+        if item.quantity < product.stock:
+            item.quantity += 1
+        else:
+            messages.warning(request, 'You cannot add more than the available stock.')
+            return redirect('cart')
+    item.save()
+    messages.success(request, f'{product.name} was added to your cart.')
+    return redirect('cart')
+
+@login_required
+def update_cart(request, item_id):
+    if request.method != 'POST':
+        return redirect('cart')
+    item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+    try:
+        quantity = int(request.POST.get('quantity', 1))
+    except (TypeError, ValueError):
+        quantity = 1
+    if quantity <= 0:
+        item.delete()
+        return redirect('cart')
+    if quantity > item.product.stock:
+        messages.error(request, f'Only {item.product.stock} units are available.')
+        return redirect('cart')
+    item.quantity = quantity
+    item.save()
+    return redirect('cart')
+
+@login_required
+def remove_from_cart(request, item_id):
+    if request.method == 'POST':
+        item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+        item.delete()
+    return redirect('cart')
+
+@login_required
+@transaction.atomic
+def checkout(request):
+    user_cart = get_object_or_404(Cart, user=request.user)
+    items = list(user_cart.items.select_related('product'))
+    if not items:
+        messages.warning(request, 'Your cart is empty.')
+        return redirect('cart')
+    for item in items:
+        if item.quantity > item.product.stock:
+            messages.error(request, f'Not enough stock for {item.product.name}.')
+            return redirect('cart')
+    total = sum(item.product.price * item.quantity for item in items)
+    order = Order.objects.create(user=request.user, total=total, status='pending')
+    for item in items:
+        OrderItem.objects.create(order=order, product=item.product, product_name=item.product.name, price=item.product.price, quantity=item.quantity,)
+        item.product.stock -= item.quantity
+        item.product.save(update_fields=['stock'])
+    user_cart.items.all().delete()
+    messages.success(request, f'Order #{order.id} created successfully.')
+    return redirect('order_detail', order_id=order.id)
+
+@login_required
+def orders(request):
+    user_orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'orders.html', {'orders':user_orders})
+
+@login_required
+def order_detail(request, order_id):
+    order = get_object_or_404(Order.objects.prefetch_related('items'), id=order_id, user=request.user)
+    return render(request, 'order_detail.html', {'order':order})
+
+def aboutus(request):
+    return render(request, 'aboutus.html')
