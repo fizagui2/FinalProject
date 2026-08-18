@@ -1,0 +1,5 @@
+Django==6.0.7
+
+# Django dependencies (installed automatically, pinned for reproducibility)
+asgiref==3.12.1
+sqlparse==0.5.5

@@ -9,12 +9,13 @@
                 <li class="nav-item"> <a class="nav-link" href="{% url 'categories' %}">Feed</a></li>
                 <li class="nav-item"> <a class="nav-link" href="{% url 'forums' %}">Community</a></li>
                 <li class="nav-item"> <a class="nav-link" href="{% url 'news' %}">News</a></li>
-                <li class="nav-item dropdown"> <a class="nav-link dropdown-toggle" href="{% url 'shop'%}" data-bs-toggle="dropdown"
-                        aria-expanded="false">Store</a>
+                <li class="nav-item dropdown"> <a class="nav-link dropdown-toggle" href="{% url 'shop'%}" data-bs-toggle="dropdown" aria-expanded="false">Store</a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Videogames</a></li>
-                        <li><a class="dropdown-item" href="#">Collectibles</a></li>
-                        <li><a class="dropdown-item" href="#">Accesories</a></li>
+                        <li><a class="dropdown-item" href="{% url 'shop' %}?type=game">Videogames</a></li>
+                        <li><a class="dropdown-item" href="{% url 'shop' %}?type=collectible">Collectibles</a></li>
+                        <li><a class="dropdown-item" href="{% url 'shop' %}?type=accessory">Accesories</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'shop' %}">View All Products</a></li>
                     </ul>
                 </li>
                 <li class="nav-item">
@@ -24,9 +25,20 @@
                     </form>
                 </li>
             </ul>
-            <div class="d-lg-flex col-lg-3 justify-content-lg-end">
-                <button class="btn btn-primary">👤Login</button>
-                <button class="btn btn-primary">&#128722;My Cart</button>
+            <div class="d-lg-flex col-lg-3 justify-content-lg-end gap-2">
+                {% if user.is_authenticated %}
+                <span class="btn btn-outline-light disabled">👤 {{ user.username }}</span>
+                <a href="{% url 'cart' %}" class="btn btn-primary">🛒 My Cart</a>
+                <form method="post" action="{% url 'logout' %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">Logout</button>
+                </form>
+                {% else %}
+                <a href="{% url 'login' %}" class="btn btn-outline-light">👤Login</a>
+                <a href="{% url 'register' %}" class="btn btn-primary">Create Account</a>
+                {% endif %}
+                
+                
             </div>
         </div>
     </div>

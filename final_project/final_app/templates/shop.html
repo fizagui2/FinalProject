@@ -1,1 +1,91 @@
 {% extends 'base.html' %}
+
+{% block title %} 🛒Store🛒 {% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>Game Universe Store</h1>
+            <p class="text-muted">Games, collectibles and gaming accessories.</p>
+        </div>
+        <a href="{% url 'cart' %}" class="btn btn-primary">🛒 Cart</a>
+    </div>
+
+
+    <!-- Filters -->
+    <div class="mb-4">
+        <a href="{% url 'shop' %}" class="btn btn-outline-secondary">All</a>
+        <a href="{% url 'shop' %}?type=game" class="btn btn-outline-primary">🎮 Video Games</a>
+        <a href="{% url 'shop' %}?type=collectible"class="btn btn-outline-primary">🧸 Collectibles</a>
+        <a href="{% url 'shop' %}?type=accessory" class="btn btn-outline-primary">🎧 Accessories</a>
+    </div>
+
+
+    <!-- PRODUCTS -->
+    <div class="row g-4">
+        {% for product in products %}
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm">
+                    {% if product.image %}
+                        <img
+                            src="{{ product.image.url }}"
+                            class="card-img-top"
+                            alt="{{ product.name }}"
+                            style="height: 250px; object-fit: cover;"
+                        >
+                    {% else %}
+                        <div class="bg-dark text-white d-flex align-items-center justify-content-center" style="height: 250px;">No image</div>
+                    {% endif %}
+
+                    <div class="card-body d-flex flex-column">
+                        <span class="badge bg-secondary mb-2">{{ product.get_product_type_display }}</span>
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text text-muted">{{ product.description|truncatewords:20 }}</p>
+
+                        <div class="mt-auto">
+                            <h4>${{ product.price }}</h4>
+
+                            {% if product.stock > 0 %}
+                                <p class="text-success">{{ product.stock }} available</p>
+                            {% else %}
+                                <p class="text-danger">Out of stock</p>
+                            {% endif %}
+
+                            <div class="d-flex gap-2">
+                                <a
+                                    href="{% url 'product_detail' product.slug %}"
+                                    class="btn btn-outline-primary"
+                                >
+                                    View
+                                </a>
+
+                                {% if product.stock > 0 %}
+                                    <form
+                                        method="POST"
+                                        action="{% url 'add_to_cart' product.id %}"
+                                    >
+                                        {% csrf_token %}
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-primary"
+                                        >
+                                            Add to Cart
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        {% empty %}
+            <div class="alert alert-info">
+                No products are available right now.
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
