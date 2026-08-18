@@ -76,7 +76,6 @@
                             <button type="button" class="post-action-btn comments-toggle" data-comments-target="post-{{ post.id }}-comments">
                                 <i class="bi bi-chat-left-text"></i><span class="comment-count">{{ post.comments.count }}</span> Comments
                             </button>
-                            <button type="button" class="post-action-btn"><i class="bi bi-share"></i>Share</button>
                         </div>
 
                         <div class="comments-panel d-none" id="post-{{ post.id }}-comments">
@@ -110,17 +109,16 @@
                     <div class="avatar-circle">🎮</div>
                     <h5 class="mb-0">GameHub Forums</h5>
                 </div>
-                <p>A community for gamers to share news, ask questions, and talk about everything from
-                    PlayStation to retro consoles.</p>
+                <p>A community for gamers to share news, ask questions, and talk about everything gaming.</p>
 
                 <div class="about-stats">
-                    <span>Members</span><strong>128,430</strong>
+                    <span>Members</span><strong>{{ member_count }}</strong>
                 </div>
                 <div class="about-stats">
-                    <span>Online now</span><strong class="text-success">3,204</strong>
+                    <span>Posts</span><strong>{{ post_count }}</strong>
                 </div>
                 <div class="about-stats">
-                    <span>Founded</span><strong>2024</strong>
+                    <span>Categories</span><strong>{{ category_count }}</strong>
                 </div>
 
                 <button type="button" class="btn btn-primary w-100 mt-3" data-bs-toggle="modal" data-bs-target="#createPostModal">

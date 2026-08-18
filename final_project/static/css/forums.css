@@ -361,6 +361,23 @@
   color: #f3f4f6;
 }
 
+/* The closed <select> can be themed freely, but most browsers render the
+   opened options list with their own native (usually light) popup. Two
+   things fight readability there: (1) background-color on <option> is
+   mostly ignored, only text color carries through, and (2) if the browser
+   thinks the page prefers dark mode it can render that native popup dark
+   too, which the "color: #111827" below alone can't override. Forcing
+   color-scheme: light pins the popup itself to a light background so the
+   dark option text is guaranteed to have something to contrast against. */
+#createPostModal .form-select {
+  color-scheme: light;
+}
+
+#createPostModal .form-select option {
+  color: #111827;
+  background-color: #fff;
+}
+
 #createPostModal .form-control:focus,
 #createPostModal .form-select:focus {
   background: rgba(255, 255, 255, 0.08);
