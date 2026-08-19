@@ -90,3 +90,49 @@ main{
     color:#8b5cf6 !important;
 
 }
+
+
+/* ==========================
+   Footer
+========================== */
+
+.site-footer{
+    margin-top: 60px;
+    background: rgba(255,255,255,.03);
+    border-top: 1px solid rgba(255,255,255,.08);
+}
+
+.site-footer h5{
+    color: #f3f4f6;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.footer-brand{
+    color: #6ee7ff;
+    font-weight: 800;
+}
+
+.site-footer .nav-link{
+    font-size: 0.9rem;
+    transition: color .2s ease;
+}
+
+.site-footer .nav-link:hover{
+    color: #6ee7ff !important;
+}
+
+/* Bootstrap's .text-body-secondary / .text-muted assume a light page
+   background (this site never sets data-bs-theme="dark"), so anywhere they're
+   used they render as dark-gray-on-dark-gray and are unreadable. Fixed
+   globally here instead of patching every component that happens to use
+   them one at a time. */
+.text-body-secondary,
+.text-muted{
+    color: #9ca3af !important;
+}
+
+.footer-bottom{
+    border-top-color: rgba(255,255,255,.08) !important;
+}

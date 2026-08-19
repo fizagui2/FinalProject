@@ -295,6 +295,10 @@
   resize: none;
 }
 
+.reply-form textarea::placeholder {
+  color: #6b7280;
+}
+
 .reply-form textarea:focus {
   background: rgba(255, 255, 255, 0.07);
   color: #fff;

@@ -1,0 +1,169 @@
+/* ==========================================================================
+   Home page — scoped to home.html only (loaded via {% block extra_css %}).
+   Builds on the existing .game-card/.home-container look from styles.css
+   with a proper hero section and a quick-links strip, so the page reads as
+   a landing page instead of three bare boxes.
+   ========================================================================== */
+
+.home-hero {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  border-radius: 20px;
+  padding: 4rem 2rem;
+  margin: 40px auto 3rem;
+  width: 90%;
+  max-width: 1400px;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(124, 58, 237, 0.35), transparent 50%),
+    radial-gradient(circle at 85% 80%, rgba(0, 180, 216, 0.28), transparent 50%),
+    rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.home-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(124, 58, 237, 0.18);
+  color: #c084fc;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  margin-bottom: 1.25rem;
+}
+
+.home-hero-title {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 800;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #ffffff 20%, #6ee7ff 60%, #c084fc 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.home-hero-subtitle {
+  max-width: 620px;
+  margin: 0 auto 2rem;
+  color: #b8bcc8;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.home-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.9rem;
+}
+
+.home-hero-actions .btn {
+  padding: 0.7rem 1.6rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+/* -------------------------------------------------------------------- */
+/* Content cards — restyle what's inside the existing .game-card boxes  */
+/* -------------------------------------------------------------------- */
+.home-container {
+  align-items: stretch;
+}
+
+.home-container .game-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.home-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  color: #d1d5db;
+  font-size: 0.95rem;
+}
+
+.home-list li:first-child {
+  border-top: none;
+}
+
+.home-list .bi {
+  color: #6ee7ff;
+  font-size: 1.05rem;
+}
+
+.home-forums-card {
+  justify-content: center;
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.home-card-cta {
+  margin-top: auto;
+  padding-top: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #c084fc;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* -------------------------------------------------------------------- */
+/* Quick links strip                                                    */
+/* -------------------------------------------------------------------- */
+.home-quicklinks {
+  width: 90%;
+  max-width: 1400px;
+  margin: 3rem auto 40px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.quicklink-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1.5rem 1rem;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #e5e7eb;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.25s ease;
+}
+
+.quicklink-card:hover {
+  color: #fff;
+  transform: translateY(-4px);
+  border-color: #7c3aed;
+  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+}
+
+.quicklink-card .bi {
+  font-size: 1.75rem;
+  color: #6ee7ff;
+}
+
+@media (max-width: 767.98px) {
+  .home-quicklinks {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

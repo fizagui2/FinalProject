@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.conf import settings
 from decimal import Decimal
@@ -57,7 +58,7 @@ class Vote(models.Model):
         unique_together = ('post', 'user')  # one vote per user per post
 
 
-# >> marketplace code
+# marketplace code
 class Product(models.Model):
     PRODUCT_TYPES = [('game', 'Video Game'), ('collectible','Collectible'), ('accessory','Accessory')]
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="products")
@@ -122,3 +123,45 @@ class OrderItem(models.Model):
         return self.price * self.quantity
     def __str__(self):
         return f"{self.quantity} x {self.product_name}"
+
+
+# user marketplace listings
+class Listing(models.Model):
+    """A listing a signed in user creates to sell an item to other users.
+
+    Any signedbin user can post one, buyers just express interest and the seller follows up.
+    """
+
+    seller = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='listings')
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='listings')
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    image = models.ImageField(
+        upload_to='listings/',
+        blank=True,
+        null=True,
+        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])],
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.title} (${self.price})"
+
+
+class ListingInterest(models.Model):
+    """Records a buyer clicking "I'm Interested" on a listing.
+    """
+
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='interests')
+    buyer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='interested_listings')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('listing', 'buyer')  # one "interested" click per user per listing
+
+    def __str__(self):
+        return f"{self.buyer.username} interested in {self.listing.title}"

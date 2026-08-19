@@ -1,5 +1,34 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% title block %}About Us | Game Universe{% endblock %}
+{% block title %}About Us{% endblock %}
 
-{% block content %}{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="home-container" style="grid-template-columns: 2fr 1fr;">
+    <div class="game-card">
+        <h1>🎮About Game Universe🎮</h1>
+        <p>
+            Game Universe is the community and marketplace built for gamers — talk games in the
+            forums, catch up on the latest news, and buy, sell, and trade with other members in
+            the marketplace.
+        </p>
+        <p class="mb-0">
+            This site is a school project, built to practice full-stack web development with Django.
+        </p>
+    </div>
+
+    <div class="game-card">
+        <h2>🎮Creators🎮</h2>
+        <ul class="home-list">
+            <li><i class="bi bi-person-fill"></i>Luis Chavez</li>
+            <li><i class="bi bi-person-fill"></i>Francisco Izaguirre</li>
+            <li><i class="bi bi-person-fill"></i>Omar Villalobos</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

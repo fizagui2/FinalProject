@@ -1,9 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from .models import (Category, User, Product, Cart, CartItem, Order, OrderItem, )
-from .models import Category, User
-from .models import Category, Comment, Post, User, Vote
+from .models import Category, Comment, Post, User, Vote, Product, Cart, CartItem, Order, OrderItem, Listing, ListingInterest
 
 
 @admin.register(User)
@@ -53,3 +51,28 @@ class CommentAdmin(admin.ModelAdmin):
 class VoteAdmin(admin.ModelAdmin):
     list_display = ('post', 'user', 'value')
     list_filter = ('value',)
+
+
+class ListingInterestInline(admin.TabularInline):
+    model = ListingInterest
+    extra = 0
+    readonly_fields = ('buyer', 'created_at')
+    can_delete = False
+
+
+@admin.register(Listing)
+class ListingAdmin(admin.ModelAdmin):
+    list_display = ('title', 'seller', 'category', 'price', 'interest_count', 'created_at')
+    list_filter = ('category', 'created_at')
+    search_fields = ('title', 'description', 'seller__username')
+    inlines = [ListingInterestInline]
+
+    @admin.display(description='Interested buyers')
+    def interest_count(self, obj):
+        return obj.interests.count()
+
+
+@admin.register(ListingInterest)
+class ListingInterestAdmin(admin.ModelAdmin):
+    list_display = ('listing', 'buyer', 'created_at')
+    search_fields = ('listing__title', 'buyer__username')

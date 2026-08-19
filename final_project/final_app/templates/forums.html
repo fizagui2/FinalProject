@@ -20,12 +20,6 @@
         <!-- Main feed -->
         <div class="col-lg-8">
 
-            {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-danger">{{ message }}</div>
-            {% endfor %}
-            {% endif %}
-
             <!-- "Create a post" trigger bar -->
             <div class="forum-panel create-post-bar" data-bs-toggle="modal" data-bs-target="#createPostModal">
                 <div class="avatar-circle">{{ user.username|first|upper|default:"?" }}</div>

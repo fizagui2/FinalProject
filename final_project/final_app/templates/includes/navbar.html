@@ -3,32 +3,16 @@
             data-bs-target="#navbarsExample11" aria-controls="navbarsExample11" aria-expanded="false"
             aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
         <div class="collapse navbar-collapse d-lg-flex" id="navbarsExample11"> <a class="navbar-brand col-lg-3 me-0"
-                href="#"><h2>Game Universe</h2></a>
+                href="{% url 'home' %}"><h2>Game Universe</h2></a>
             <ul class="navbar-nav col-lg-6 justify-content-lg-center">
                 <li class="nav-item"> <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a></li>
-                <li class="nav-item"> <a class="nav-link" href="{% url 'categories' %}">Feed</a></li>
-                <li class="nav-item"> <a class="nav-link" href="{% url 'forums' %}">Community</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'forums' %}">Forums</a></li>
                 <li class="nav-item"> <a class="nav-link" href="{% url 'news' %}">News</a></li>
-                <li class="nav-item dropdown"> <a class="nav-link dropdown-toggle" href="{% url 'shop'%}" data-bs-toggle="dropdown" aria-expanded="false">Store</a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="{% url 'shop' %}?type=game">Videogames</a></li>
-                        <li><a class="dropdown-item" href="{% url 'shop' %}?type=collectible">Collectibles</a></li>
-                        <li><a class="dropdown-item" href="{% url 'shop' %}?type=accessory">Accesories</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="{% url 'shop' %}">View All Products</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <form class="d-flex" role="search"> 
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"> 
-                        <button class="btn btn-outline-success" type="submit">Search</button> 
-                    </form>
-                </li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'listings' %}">Marketplace</a></li>
             </ul>
             <div class="d-lg-flex col-lg-3 justify-content-lg-end gap-2">
                 {% if user.is_authenticated %}
                 <span class="btn btn-outline-light disabled">👤 {{ user.username }}</span>
-                <a href="{% url 'cart' %}" class="btn btn-primary">🛒 My Cart</a>
                 <!-- Django 5+ only accepts POST for logout, so this has to be a form, not a plain link -->
                 <form method="post" action="{% url 'logout' %}" class="d-inline">
                     {% csrf_token %}
@@ -38,9 +22,6 @@
                 <a href="{% url 'login' %}" class="btn btn-outline-light">👤Login</a>
                 <a href="{% url 'register' %}" class="btn btn-primary">Create Account</a>
                 {% endif %}
-                
-                
-                <button class="btn btn-primary">&#128722;My Cart</button>
             </div>
         </div>
     </div>

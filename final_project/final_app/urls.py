@@ -15,5 +15,9 @@ urlpatterns = [
     path('news/', views.news, name='news'),
     path('shop/', views.shop, name='shop'),
     path('shop/cart/', views.cart, name='cart'),
+    path('marketplace/', views.listings, name='listings'),
+    path('marketplace/create/', views.create_listing, name='create_listing'),
+    path('marketplace/<int:listing_id>/', views.listing_detail, name='listing_detail'),
+    path('marketplace/<int:listing_id>/interested/', views.express_interest, name='express_interest'),
     path('aboutus/', views.aboutus, name='aboutus'),
 ]

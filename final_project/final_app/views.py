@@ -11,10 +11,7 @@ from django.urls import reverse
 from django.db import transaction
 
 from .forms import SignUpForm
-from .models import (Category, Post, Comment, Vote, Product, Cart, CartItem, Order, OrderItem, )
-
-from .forms import SignUpForm
-from .models import Category, Post, Comment, Vote, User
+from .models import Category, Post, Comment, Vote, User, Product, Cart, CartItem, Order, OrderItem, Listing, ListingInterest
 
 
 def home(request):
@@ -329,7 +326,7 @@ def news(request):
     }
     return render(request, 'news.html', context)
 
-# >> shop stuff
+# shop stuff
 def shop(request):
     products = Product.objects.select_related('category').all()
     product_type = request.GET.get('type')
@@ -435,3 +432,78 @@ def order_detail(request, order_id):
 
 def aboutus(request):
     return render(request, 'aboutus.html')
+
+
+# user to other user listings
+def listings(request):
+    all_listings = Listing.objects.select_related('seller', 'category').all()
+    category_id = request.GET.get('category')
+    mine = request.GET.get('mine')
+    if category_id:
+        all_listings = all_listings.filter(category_id=category_id)
+    if mine and request.user.is_authenticated:
+        all_listings = all_listings.filter(seller=request.user)
+    context = {
+        'listings': all_listings,
+        'categories': Category.objects.all(),
+        'mine': mine,
+    }
+    return render(request, 'listings.html', context)
+
+
+@login_required
+def create_listing(request):
+    if request.method == 'POST':
+        title = request.POST.get('title', '').strip()
+        description = request.POST.get('description', '').strip()
+        price = request.POST.get('price')
+        category_id = request.POST.get('category')
+        image = request.FILES.get('image')
+
+        if title and description and price:
+            listing = Listing.objects.create(
+                seller=request.user,
+                category_id=category_id or None,
+                title=title,
+                description=description,
+                price=price,
+                image=image,
+            )
+            messages.success(request, 'Your listing is up.')
+            return redirect('listing_detail', listing_id=listing.id)
+        messages.error(request, 'A listing needs a title, description, and price.')
+
+    context = {'categories': Category.objects.all()}
+    return render(request, 'create_listing.html', context)
+
+
+def listing_detail(request, listing_id):
+    listing = get_object_or_404(Listing.objects.select_related('seller', 'category'), id=listing_id)
+    already_interested = False
+    if request.user.is_authenticated:
+        already_interested = listing.interests.filter(buyer=request.user).exists()
+
+    context = {
+        'listing': listing,
+        'already_interested': already_interested,
+        'interest_count': listing.interests.count(),
+        'is_seller': request.user == listing.seller,
+    }
+    if context['is_seller']:
+        context['interested_buyers'] = listing.interests.select_related('buyer')
+    return render(request, 'listing_detail.html', context)
+
+
+@login_required
+def express_interest(request, listing_id):
+    listing = get_object_or_404(Listing, id=listing_id)
+    if request.method == 'POST':
+        if request.user == listing.seller:
+            messages.error(request, "You can't express interest in your own listing.")
+        else:
+            interest, created = ListingInterest.objects.get_or_create(listing=listing, buyer=request.user)
+            if created:
+                messages.success(request, f'You marked interest in "{listing.title}" — the seller can see your contact email on the listing.')
+            else:
+                messages.info(request, "You've already shown interest in this listing.")
+    return redirect('listing_detail', listing_id=listing.id)
